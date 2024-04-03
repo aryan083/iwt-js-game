@@ -306,5 +306,5 @@ window.addEventListener('resize',function(){
 });
 
 function goToMenu() {
-    window.location.href = "menu.html";
+    window.location.href = "index.html";
 }
