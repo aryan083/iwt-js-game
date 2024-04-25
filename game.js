@@ -6,7 +6,12 @@ gameover=false;
 let score =0;
 let gameframe=0;
 ctx.font='50px Georgia';
-gamespeed=1;
+let gamespeed=1;
+const bubblepop1 = document.createElement('audio');
+bubblepop1.src='./assets/Plop.ogg';
+
+const bubblepop2 = document.createElement('audio');
+bubblepop2.src='./assets/bubbles-single2.wav';
 //Mouse capture mouse movement
 let canvasPosition = canvas.getBoundingClientRect();
 const mouse = {
@@ -28,10 +33,9 @@ canvas.addEventListener('mouseup',function(){
 });
 
 const playerLeft=new Image();
-playerLeft.src='assets/fish1.png';
+playerLeft.src='./assets/fish1.png';
 const playerRight=new Image();
-playerRight.src='assets/fish2.png';
-
+playerRight.src='./assets/fish2.png';
 
 class Player {
     constructor(){
@@ -44,66 +48,73 @@ class Player {
         this.frame = 0;
         this.spritewidth=498;
         this.spriteheight=327;
+        this.animationSpeed = 0.15; // Adjust animation speed as needed
+        this.spriteRows = 3; // Number of rows in sprite sheet
+        this.spriteColumns = 4; // Number of columns in sprite sheet
     }
 
     update(){
         const dx = this.x - mouse.x;
         const dy = this.y - mouse.y; 
-        let theta =Math.atan2(dy,dx);
-        this.angle=theta;
-        if(mouse.x != this.x)
-        {
-            this.x -=dx/30;
+        let theta = Math.atan2(dy, dx);
+        this.angle = theta;
+
+        // Player control
+        if (mouse.x !== this.x) {
+            this.x -= dx / 30;
         }
-        if(mouse.y != this.y)
-        {
-            this.y -=dy/30;
+        if (mouse.y !== this.y) {
+            this.y -= dy / 30;
         }
     }
-    draw()
-    {
-        if(mouse.click)
-        {
-            ctx.lineWidth=0.2
-            ctx.beginPath();
-            ctx.moveTo(this.x,this.y);
-            ctx.lineTo(mouse.x,mouse.y);
-            ctx.stroke();
-        }
-        ctx.fillsyle = 'red';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.closePath();
-        ctx.fillRect(this.x,this.y,this.radius,10);
-    
+
+    draw() {
+        // Your existing drawing code remains the same
         ctx.save();
-        ctx.translate(this.x,this.y);
+        ctx.translate(this.x, this.y);
         ctx.rotate(this.angle);
 
-        if(this.x>=mouse.x)
-            {
-                ctx.drawImage(playerLeft,this.frameX*this.spritewidth,
-                this.frameY*this.spriteheight,this.spritewidth,this.spriteheight,
-                0-60,0-45,this.spritewidth/4,this.spriteheight/4);
-            }
-        else
-            {
-                ctx.drawImage(playerRight,this.frameX*this.spritewidth,
-                this.frameY*this.spriteheight,this.spritewidth,this.spriteheight,
-                0-60,0-45,this.spritewidth/4,this.spriteheight/4);
-            }
-    
-        ctx.restore();  
+        if (this.x >= mouse.x) {
+            ctx.drawImage(playerLeft, this.frameX * this.spritewidth,
+                this.frameY * this.spriteheight, this.spritewidth, this.spriteheight,
+                0 - 60, 0 - 45, this.spritewidth / 4, this.spriteheight / 4);
+        } else {
+            ctx.drawImage(playerRight, this.frameX * this.spritewidth,
+                this.frameY * this.spriteheight, this.spritewidth, this.spriteheight,
+                0 - 60, 0 - 45, this.spritewidth / 4, this.spriteheight / 4);
+        }
+
+        ctx.restore();
+
+        // Update frame index for animation
+        this.frame += this.animationSpeed;
+        if (this.frame >= this.spriteColumns) {
+            this.frame = 0;
+        }
+        this.frameX = Math.floor(this.frame % this.spriteColumns);
+        this.frameY = Math.floor(this.frame / this.spriteColumns);
     }
 
+    // Add mouse control methods
+    onMouseDown(event) {
+        mouse.click = true;
+        const canvasPosition = canvas.getBoundingClientRect();
+        mouse.x = event.x - canvasPosition.left;
+        mouse.y = event.y - canvasPosition.top;
+        mouse.click = true;
+    }
+
+    onMouseUp() {
+        mouse.click = false;
+    }
 }
+
 
 let player = new Player();
 
 const bubbleArray=[];
 const bubbleImage = new Image();
-bubbleImage.src='assets/bubble1.png';
+bubbleImage.src='./assets/bubble1.png';
 
 class Bubble {
     constructor(){
@@ -128,11 +139,7 @@ class Bubble {
     }
 
 }
-const bubblepop1 = document.createElement('audio');
-bubblepop1.src='assets/Plop.ogg';
 
-const bubblepop2 = document.createElement('audio');
-bubblepop2.src='assets/bubbles-single2.wav';
 function handleBubbles(){
     if(gameframe % 50 == 0){
         bubbleArray.push(new Bubble());
@@ -169,11 +176,33 @@ function handleBubbles(){
             }
         }
     }
+
+// Inside the animate function, call the animate method of each bubble if it's counted
+function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    handleBackground();
+    player.update();
+    player.draw();
+    ctx.fillStyle='black';
+    ctx.fillText('score: '+score,10,50);
+    gameframe++;
+    if (!gameover) requestAnimationFrame(animate);
+    handleBubbles();
+    handleEnemies();
+    // Check if any counted bubbles need animation
+    for (let i = 0; i < bubbleArray.length; i++) {
+        if (bubbleArray[i].counted) {
+            bubbleArray[i].animate();
+        }
+    }
+}
+
+
 //backgound
 const background = new Image();
-background.src='assets/bg10.png';
+background.src='assets/background.png';
 
-const BG={
+const BG = {
     x1:0,
     x2:canvas.width,
     y:0,
@@ -183,16 +212,22 @@ const BG={
 
 function handleBackground(){
     BG.x1-=gamespeed;
-    if(BG.x1<BG.width) BG.x1=BG.width;
-    ctx.drawImage(background,BG.x1,BG.y,BG.width,BG.height);
+    if(BG.x1<-BG.width) {BG.x1=BG.width;}
     BG.x2-=gamespeed;
-    if(BG.x2<BG.width) BG.x2=BG.width;
+    if(BG.x2<-BG.width) {BG.x2=BG.width;}
+    ctx.drawImage(background,BG.x1,BG.y,BG.width,BG.height);
     ctx.drawImage(background,BG.x2,BG.y,BG.width,BG.height);
+    // Draw underwater plants
+    ctx.drawImage(underwaterPlantImage, 40, canvas.height - 150, 150, 150);
+    ctx.drawImage(underwaterPlantImage, 300, canvas.height - 100, 120, 120);
+    ctx.drawImage(underwaterPlantImage2, 500, canvas.height - 150, 150, 150);
+    
+    }
 
-}
+
 
 const enemyImage = new Image();
-enemyImage.src='assets/enemy1.png';
+enemyImage.src='./assets/enemy1.png';
 let enemyInterval = setInterval(spawnEnemy, 2000);
 
 class Enemy {
@@ -248,8 +283,8 @@ class Enemy {
 
 function handleGameOver(){
     clearInterval(enemyInterval);
-    ctx.fillStyle ='white';
-    ctx.fillText('Game Over your score is: ' + score,canvas.width/2 - 200,canvas.height/2);
+    ctx.fillStyle ='red';
+    ctx.fillText('Game Over your score is: ' + score,canvas.width/2-400,canvas.height/2);
     gameover=true;
     restartButton.style.display = 'block';
 }

@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
 }
 body {
     height: 100vh;
@@ -9,16 +10,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom, lightblue, darkblue, black);
 
 }
 
 #canvas1{
-    width: 800px;
-    height: 500px;
+    width: 970px;
+    height: 680px;
     border: 4px solid black; 
-    background : linear-gradient(to button ,lightblue, darkblue,black);
+    background : linear-gradient(to bottom ,lightblue, darkblue,black);
+    background-image: url('assets/2_game_background.png') ;
+    background-size: cover;
 }
+
 button {
     padding: 10px 20px;
     font-size: 18px;
