@@ -5,10 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Menu</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #FF6F61;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            margin-bottom: 20px;
+            color: #444444; /* Darker text color */
+        }
+        ul {
+            margin-bottom: 20px;
+            color: #444444; /* Darker text color */
+        }
+        li {
+            margin-bottom: 10px;
+            color: #444444; /* Darker text color */
+        }
+        a {
+            color: #ffffff;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
+    
 </head>
 <body style="background-image: url('assets/4_game_background.png'); background-size:cover;">
     <div class="menu-container">
-        <h1>Welcome to Bubble Hunt Hunt</h1>
+        <h1>Bubble Hunt Game</h1>
+        
+        <p>Welcome to the Bubble Pop Game! Follow the rules and instructions below to play:</p>
+        <h2 style="color: Red ;">Rules:</h2>
+        <ul>
+            <li>Aim of the game: Pop as many bubbles as you can before the game ends.</li>
+            <li>You lose if you collide with an enemy or let a bubble reach the top of the screen.</li>
+        </ul>
+        <h2>How to Play:</h2>
+        <ol>
+            <li>Move your mouse to control the player character (the fish).</li>
+            <li>Click and hold the mouse button to create a trail, helping you navigate through the bubbles.</li>
+            <li>Avoid colliding with enemies and ensure that bubbles don't reach the top of the screen.</li>
+            <li>Pop bubbles by moving the player character (fish) close to them.</li>
+            <li>Each popped bubble increases your score.</li>
+            <li>Try to achieve the highest score possible!</li>
+        </ol>
+        <h2>Ready to Play?</h2>
         <button><a href="game.html">Start Game</a></button>
     </div>
 </body>
